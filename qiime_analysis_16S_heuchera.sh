@@ -125,6 +125,8 @@ qiime taxa barplot --i-table table.qza --i-taxonomy taxonomy.withhost.qza --m-me
 #######
 # Aggregate taxon barplots to host species
 
+# don't forget the .tsv file mentioned below -- it's a simple spreadsheet
+
 qiime feature-table group --i-table table.organellesremoved.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --p-axis sample --p-mode mean-ceiling --o-grouped-table table.grouped_hostspecies # note lack of extension
 qiime taxa barplot --i-table table.grouped_hostspecies.qza --i-taxonomy taxonomy.qza --m-metadata-file sample-metadata.grouped_hostspecies.tsv --o-visualization taxa-bar-plots.grouped_hostspecies.qzv
 
