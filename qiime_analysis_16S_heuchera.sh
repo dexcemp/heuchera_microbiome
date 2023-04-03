@@ -121,6 +121,16 @@ qiime metadata tabulate --m-input-file taxonomy.qza --o-visualization taxonomy.w
 qiime taxa barplot --i-table table.qza --i-taxonomy taxonomy.withhost.qza --m-metadata-file sample-metadata.tsv --o-visualization taxa-bar-plots.withhost.qzv
 
 
+
+#######
+# Aggregate taxon barplots to host species
+
+qiime feature-table group --i-table table.hostremoved.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --p-axis sample --p-mode mean-ceiling --o-grouped-table table.grouped_hostspecies # note lack of extension
+qiime taxa barplot --i-table table.grouped_sampletype.qza --i-taxonomy taxonomy.qza --m-metadata-file sample-metadata.grouped_hostspecies.tsv --o-visualization taxa-bar-plots.grouped_hostspecies.qzv
+
+
+
+
 #######
 # Export tsv
 
@@ -147,6 +157,7 @@ mv ./export/feature-table.biom ./export/table.biom
 conda activate picrust2
 picrust2_pipeline.py -s ./export/rep-seqs.fasta -i ./export/table.biom -o picrust2_output -p 4 --verbose 
 add_descriptions.py -i picrust2_output/pathways_out/path_abun_unstrat.tsv.gz -m METACYC -o picrust2_output/pathways_out/path_abun_unstrat.tsv.descriptions.gz
+
 
 
 
