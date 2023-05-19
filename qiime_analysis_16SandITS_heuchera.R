@@ -17,6 +17,10 @@ names(combined) <- c("sample.id", "host_species", "host_subsection", "latitude",
 combined.scaled.parviflora <- combined.scaled %>% filter(host_species %in% c("Heuchera_missouriensis", "Heuchera_puberula", "Heuchera_parviflora_parviflora", "Heuchera_parviflora_saurensis"))
 combined.parviflora <- combined %>% filter(host_species %in% c("Heuchera_puberula", "Heuchera_parviflora_parviflora", "Heuchera_parviflora_saurensis"))
 
+# ANOVA for parviflora group diversity statistics
+summary(aov(shannon_entropy ~ host_species, data = combined.scaled.parviflora))
+summary(aov(faith_pd ~ host_species, data = combined.scaled.parviflora))
+
 # subset to the well-sampled species
 combined.scaled.reduced <- combined.scaled %>% filter(host_species %in% c("Heuchera_americana_americana", "Heuchera_americana_hirsuticaulis", "Heuchera_richardsonii", "Heuchera_longiflora_longiflora", "Heuchera_longiflora_aceroides", "Heuchera_missouriensis", "Heuchera_puberula", "Heuchera_parviflora_parviflora", "Heuchera_parviflora_saurensis"))
 combined.reduced <- combined %>% filter(host_species %in% c("Heuchera_americana_americana", "Heuchera_americana_hirsuticaulis", "Heuchera_richardsonii", "Heuchera_longiflora_longiflora", "Heuchera_longiflora_aceroides", "Heuchera_missouriensis", "Heuchera_puberula", "Heuchera_parviflora_parviflora", "Heuchera_parviflora_saurensis"))
