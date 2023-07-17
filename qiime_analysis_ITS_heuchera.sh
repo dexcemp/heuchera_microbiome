@@ -46,7 +46,7 @@ qiime taxa barplot --i-table table.hostremoved.qza --i-taxonomy taxonomy.qza --m
 
 # Rarefaction plots
 # p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
-qiime diversity alpha-rarefaction --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 500 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.qzv
+qiime diversity alpha-rarefaction --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 1000 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.qzv
 
 
 # Run standard feature tables
