@@ -44,6 +44,9 @@ qiime taxa filter-seqs --p-exclude k__Viridiplantae --i-sequences rep-seqs.qza -
 qiime taxa barplot --i-table table.hostremoved.qza --i-taxonomy taxonomy.qza --m-metadata-file sample-metadata.tsv --o-visualization taxa-bar-plots.qzv
 
 
+# Rarefaction plots
+# p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
+qiime diversity alpha-rarefaction --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 500 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.qzv
 
 
 # Run standard feature tables
@@ -58,7 +61,7 @@ qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs.hostremoved.
 # Diversity statistics and significance
 # p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
 # Will not work for too few samples
-qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.hostremoved.qza --p-sampling-depth 11 --output-dir core-metrics-results --m-metadata-file sample-metadata.tsv 
+qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.hostremoved.qza --p-sampling-depth 350 --output-dir core-metrics-results --m-metadata-file sample-metadata.tsv 
 qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/faith_pd_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results/faith-pd-group-significance.qzv
 qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/evenness_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results/evenness-group-significance.qzv
 # Due to the longer time needed for beta diversity significance, a specific metadata column is specified to reduce computational time
@@ -68,10 +71,6 @@ qiime diversity beta-group-significance --i-distance-matrix core-metrics-results
 # Ordination plots
 qiime emperor plot --i-pcoa core-metrics-results/unweighted_unifrac_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes host_species --o-visualization core-metrics-results/unweighted-unifrac-emperor-host_species.qzv
 qiime emperor plot --i-pcoa core-metrics-results/bray_curtis_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes host_species --o-visualization core-metrics-results/bray-curtis-emperor-host_species.qzv
-
-# Rarefaction plots
-# p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
-qiime diversity alpha-rarefaction --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 11 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.qzv
 
 # ANCOM -- differential abundance analysis
 # Helps find which genera, families, etc. differ across metadata categories
