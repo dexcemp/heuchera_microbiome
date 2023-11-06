@@ -88,8 +88,8 @@ qiime emperor plot --i-pcoa core-metrics-results/unweighted_unifrac_pcoa_results
 # Rarefaction plots
 # p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
 qiime diversity alpha-rarefaction --i-table table.organellesremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 50 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.qzv
-
-
+# with host
+qiime diversity alpha-rarefaction --i-table table.qza --i-phylogeny rooted-tree.qza --p-max-depth 500 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.withhost.qzv
 
 # ANCOM -- differential abundance analysis
 # Helps find which genera, families, etc. differ across metadata categories
