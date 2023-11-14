@@ -16,8 +16,12 @@ qiime tools import --type 'SampleData[PairedEndSequencesWithQuality]' --input-pa
 qiime dada2 denoise-paired --i-demultiplexed-seqs import.qza --p-trim-left-f 19 --p-trim-left-r 20 --p-trunc-len-f 250 --p-trunc-len-r 200 --o-table table.qza --o-representative-sequences rep-seqs.qza --o-denoising-stats denoising-stats.qza
 
 # Taxonomic analysis
-qiime greengenes2 filter-features --i-feature-table table.qza --i-reference 2022.10.taxonomy.asv.nwk.qza --o-filtered-feature-table table.gg2.qza
-qiime greengenes2 taxonomy-from-table --i-reference-taxonomy 2022.10.taxonomy.asv.nwk.qza --i-table table.gg2.qza --o-classification taxonomy.qza
+#qiime greengenes2 filter-features --i-feature-table table.qza --i-reference 2022.10.taxonomy.asv.nwk.qza --o-filtered-feature-table table.gg2.qza
+#qiime greengenes2 taxonomy-from-table --i-reference-taxonomy 2022.10.taxonomy.asv.nwk.qza --i-table table.gg2.qza --o-classification taxonomy.qza
+# Above is the first recommendation in QIIME greengenes 2 documentation, but it returns this error: Plugin error from greengenes2: No requested tips found
+# QIIME forum suggests this is a length mismatch issue and sklearn is the prefered solution using the pre-built classifier
+
+
 
 qiime metadata tabulate --m-input-file taxonomy.qza --o-visualization taxonomy.qzv
 
