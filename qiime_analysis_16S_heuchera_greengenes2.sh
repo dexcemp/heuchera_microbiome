@@ -31,11 +31,5 @@ qiime taxa filter-seqs --p-exclude c__Chloroplast,f__mitochondria --i-sequences 
 # Taxa barplots, no organelles
 qiime taxa barplot --i-table table.organellesremoved.qza --i-taxonomy taxonomy.qza --m-metadata-file sample-metadata.tsv --o-visualization taxa-bar-plots.qzv
 
-# Rarefaction plots
-# p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
-qiime diversity alpha-rarefaction --i-table table.organellesremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 50 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.qzv
-# with host
-qiime diversity alpha-rarefaction --i-table table.qza --i-phylogeny rooted-tree.qza --p-max-depth 150 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.withhost150.qzv
-qiime diversity alpha-rarefaction --i-table table.qza --i-phylogeny rooted-tree.qza --p-max-depth 500 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.withhost500.qzv
-qiime diversity alpha-rarefaction --i-table table.qza --i-phylogeny rooted-tree.qza --p-max-depth 1000 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.withhost1000.qzv
+qiime taxa barplot --i-table table.qza --i-taxonomy taxonomy.qza --m-metadata-file sample-metadata.tsv --o-visualization taxa-bar-plots.withhost.qzv
 
