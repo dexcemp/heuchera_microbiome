@@ -22,7 +22,6 @@ qiime metadata tabulate --m-input-file taxonomy.qza --o-visualization taxonomy.q
 
 # Remove chloroplast and mitochondrial 16S
 qiime taxa filter-table --p-exclude c__Chloroplast,f__mitochondria --i-table table.qza --i-taxonomy taxonomy.qza --o-filtered-table table.organellesremoved.qza
-
 qiime taxa filter-seqs --p-exclude c__Chloroplast,f__mitochondria --i-sequences rep-seqs.qza --i-taxonomy taxonomy.qza --o-filtered-sequences rep-seqs.organellesremoved.qza
 
 
@@ -44,11 +43,10 @@ qiime taxa barplot --i-table table.organellesremoved.qza --i-taxonomy taxonomy.q
 
 # Rarefaction plots
 # p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
-qiime diversity alpha-rarefaction --i-table table.organellesremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 50 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.qzv
-# with host
-qiime diversity alpha-rarefaction --i-table table.qza --i-phylogeny rooted-tree.qza --p-max-depth 150 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.withhost150.qzv
-qiime diversity alpha-rarefaction --i-table table.qza --i-phylogeny rooted-tree.qza --p-max-depth 500 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.withhost500.qzv
-qiime diversity alpha-rarefaction --i-table table.qza --i-phylogeny rooted-tree.qza --p-max-depth 1000 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.withhost1000.qzv
+qiime diversity alpha-rarefaction --i-table table.organellesremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 50 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction50.qzv
+qiime diversity alpha-rarefaction --i-table table.organellesremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 150 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction150.qzv
+qiime diversity alpha-rarefaction --i-table table.organellesremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 500 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction500.qzv
+qiime diversity alpha-rarefaction --i-table table.organellesremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 1000 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction1000.qzv
 
 
 # Run standard feature tables
@@ -96,79 +94,6 @@ qiime emperor plot --i-pcoa core-metrics-results/unweighted_unifrac_pcoa_results
 #qiime emperor plot --i-pcoa core-metrics-results/bray_curtis_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes host_species --o-visualization core-metrics-results/bray-curtis-emperor-host_species.qzv
 
 
-
-#######
-# Redo diversity analyses, NO rarefaction
-#######
-# Diversity statistics and significance
-# p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
-# Will not work for too few samples
-qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.organellesremoved.qza --p-sampling-depth 0 --output-dir core-metrics-results_0 --m-metadata-file sample-metadata.tsv 
-qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results_0/faith_pd_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results_0/faith-pd-group-significance.qzv
-qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results_0/evenness_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results_0/evenness-group-significance.qzv
-# Due to the longer time needed for beta diversity significance, a specific metadata column is specified to reduce computational time
-qiime diversity beta-group-significance --i-distance-matrix core-metrics-results_0/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --o-visualization core-metrics-results_0/unweighted-unifrac-host_species-significance.qzv --p-pairwise
-qiime diversity beta-group-significance --i-distance-matrix core-metrics-results_0/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_subsection --o-visualization core-metrics-results_0/unweighted-unifrac-host_subsection-significance.qzv --p-pairwise
-
-
-# Sub-group diversity statistics
-qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.organellesremoved.americanagroup.qza --p-sampling-depth 50 --output-dir core-metrics-results_0_americana --m-metadata-file sample-metadata.tsv
-qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.organellesremoved.longifloragroup.qza --p-sampling-depth 50 --output-dir core-metrics-results_0_longiflora --m-metadata-file sample-metadata.tsv
-qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.organellesremoved.parvifloragroup.qza --p-sampling-depth 50 --output-dir core-metrics-results_0_parviflora --m-metadata-file sample-metadata.tsv
-qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results_0_americana/faith_pd_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results_0_americana/faith-pd-group-significance.qzv
-qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results_0_longiflora/faith_pd_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results_0_longiflora/faith-pd-group-significance.qzv
-qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results_0_parviflora/faith_pd_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results_0_parviflora/faith-pd-group-significance.qzv
-qiime diversity beta-group-significance --i-distance-matrix core-metrics-results_0_americana/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --o-visualization core-metrics-results_0_americana/unweighted-unifrac-host_species-significance.qzv --p-pairwise
-qiime diversity beta-group-significance --i-distance-matrix core-metrics-results_0_longiflora/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --o-visualization core-metrics-results_0_longiflora/unweighted-unifrac-host_species-significance.qzv --p-pairwise
-qiime diversity beta-group-significance --i-distance-matrix core-metrics-results_0_parviflora/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --o-visualization core-metrics-results_0_parviflora/unweighted-unifrac-host_species-significance.qzv --p-pairwise
-
-
-# Ordination plots
-qiime emperor plot --i-pcoa core-metrics-results_0/unweighted_unifrac_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes BIOCLIM_1 --o-visualization core-metrics-results_0/unweighted-unifrac-emperor-BIO1.qzv
-qiime emperor plot --i-pcoa core-metrics-results_0/unweighted_unifrac_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes BIOCLIM_12 --o-visualization core-metrics-results_0/unweighted-unifrac-emperor-BIO12.qzv
-qiime emperor plot --i-pcoa core-metrics-results_0/unweighted_unifrac_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes ISRICSOILGRIDS_new_average_phx10percent_reduced --o-visualization core-metrics-results_0/unweighted-unifrac-emperor-pH.qzv
-#qiime emperor plot --i-pcoa core-metrics-results_0/bray_curtis_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes host_species --o-visualization core-metrics-results_0/bray-curtis-emperor-host_species.qzv
-
-
-
-#######
-# Redo diversity analyses, rarefy to 150
-#######
-# Diversity statistics and significance
-# p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
-# Will not work for too few samples
-qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.organellesremoved.qza --p-sampling-depth 150 --output-dir core-metrics-results_150 --m-metadata-file sample-metadata.tsv 
-qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results_150/faith_pd_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results_150/faith-pd-group-significance.qzv
-qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results_150/evenness_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results_150/evenness-group-significance.qzv
-# Due to the longer time needed for beta diversity significance, a specific metadata column is specified to reduce computational time
-qiime diversity beta-group-significance --i-distance-matrix core-metrics-results_150/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --o-visualization core-metrics-results_150/unweighted-unifrac-host_species-significance.qzv --p-pairwise
-qiime diversity beta-group-significance --i-distance-matrix core-metrics-results_150/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_subsection --o-visualization core-metrics-results_150/unweighted-unifrac-host_subsection-significance.qzv --p-pairwise
-
-
-# Sub-group diversity statistics
-qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.organellesremoved.americanagroup.qza --p-sampling-depth 50 --output-dir core-metrics-results_150_americana --m-metadata-file sample-metadata.tsv
-qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.organellesremoved.longifloragroup.qza --p-sampling-depth 50 --output-dir core-metrics-results_150_longiflora --m-metadata-file sample-metadata.tsv
-qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.organellesremoved.parvifloragroup.qza --p-sampling-depth 50 --output-dir core-metrics-results_150_parviflora --m-metadata-file sample-metadata.tsv
-qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results_150_americana/faith_pd_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results_150_americana/faith-pd-group-significance.qzv
-qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results_150_longiflora/faith_pd_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results_150_longiflora/faith-pd-group-significance.qzv
-qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results_150_parviflora/faith_pd_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results_150_parviflora/faith-pd-group-significance.qzv
-qiime diversity beta-group-significance --i-distance-matrix core-metrics-results_150_americana/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --o-visualization core-metrics-results_150_americana/unweighted-unifrac-host_species-significance.qzv --p-pairwise
-qiime diversity beta-group-significance --i-distance-matrix core-metrics-results_150_longiflora/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --o-visualization core-metrics-results_150_longiflora/unweighted-unifrac-host_species-significance.qzv --p-pairwise
-qiime diversity beta-group-significance --i-distance-matrix core-metrics-results_150_parviflora/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --o-visualization core-metrics-results_150_parviflora/unweighted-unifrac-host_species-significance.qzv --p-pairwise
-
-
-# Ordination plots
-qiime emperor plot --i-pcoa core-metrics-results_150/unweighted_unifrac_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes BIOCLIM_1 --o-visualization core-metrics-results_150/unweighted-unifrac-emperor-BIO1.qzv
-qiime emperor plot --i-pcoa core-metrics-results_150/unweighted_unifrac_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes BIOCLIM_12 --o-visualization core-metrics-results_150/unweighted-unifrac-emperor-BIO12.qzv
-qiime emperor plot --i-pcoa core-metrics-results_150/unweighted_unifrac_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes ISRICSOILGRIDS_new_average_phx10percent_reduced --o-visualization core-metrics-results_150/unweighted-unifrac-emperor-pH.qzv
-#qiime emperor plot --i-pcoa core-metrics-results_150/bray_curtis_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes host_species --o-visualization core-metrics-results_150/bray-curtis-emperor-host_species.qzv
-
-
-
-
-
-
-
 # ANCOM -- differential abundance analysis
 # Helps find which genera, families, etc. differ across metadata categories
 qiime feature-table filter-samples --i-table table.organellesremoved.qza --m-metadata-file sample-metadata.tsv --p-where "[host_species]='Heuchera_americana_americana'" --o-filtered-table host_species-table.qza
@@ -207,7 +132,6 @@ qiime taxa barplot --i-table table.qza --i-taxonomy taxonomy.withhost.qza --m-me
 
 qiime feature-table group --i-table table.organellesremoved.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --p-axis sample --p-mode mean-ceiling --o-grouped-table table.grouped_hostspecies # note lack of extension
 qiime taxa barplot --i-table table.grouped_hostspecies.qza --i-taxonomy taxonomy.qza --m-metadata-file sample-metadata.grouped_hostspecies.tsv --o-visualization taxa-bar-plots.grouped_hostspecies.qzv
-
 
 
 
