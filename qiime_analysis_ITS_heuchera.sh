@@ -35,19 +35,17 @@ qiime metadata tabulate --m-input-file taxonomy.qza --o-visualization taxonomy.q
 
 # Remove chloroplast and mitochondrial 16S
 qiime taxa filter-table --p-exclude k__Viridiplantae --i-table table.qza --i-taxonomy taxonomy.qza --o-filtered-table table.hostremoved.qza
-
 qiime taxa filter-seqs --p-exclude k__Viridiplantae --i-sequences rep-seqs.qza --i-taxonomy taxonomy.qza --o-filtered-sequences rep-seqs.hostremoved.qza
-
-
 
 # Taxa barplots, no host
 qiime taxa barplot --i-table table.hostremoved.qza --i-taxonomy taxonomy.qza --m-metadata-file sample-metadata.tsv --o-visualization taxa-bar-plots.qzv
 
-
 # Rarefaction plots
-# p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
-qiime diversity alpha-rarefaction --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 1000 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction.qzv
-
+# p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower than the lowest sample
+qiime diversity alpha-rarefaction --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 50 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction50.qzv
+qiime diversity alpha-rarefaction --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 150 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction150.qzv
+qiime diversity alpha-rarefaction --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 500 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction500.qzv
+qiime diversity alpha-rarefaction --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-max-depth 1000 --m-metadata-file sample-metadata.tsv --o-visualization alpha-rarefaction1000.qzv
 
 # Run standard feature tables
 qiime feature-table summarize --i-table table.hostremoved.qza --o-visualization table.qzv --m-sample-metadata-file sample-metadata.tsv
@@ -61,12 +59,21 @@ qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs.hostremoved.
 # Diversity statistics and significance
 # p-sampling-depth: change per experiment; look across your samples for feature counts -- choose a number as high as possible but lower thant the lowest sample
 # Will not work for too few samples
-qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.hostremoved.qza --p-sampling-depth 350 --output-dir core-metrics-results --m-metadata-file sample-metadata.tsv 
+qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.hostremoved.qza --p-sampling-depth 50 --output-dir core-metrics-results --m-metadata-file sample-metadata.tsv 
 qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/faith_pd_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results/faith-pd-group-significance.qzv
 qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/evenness_vector.qza --m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results/evenness-group-significance.qzv
 # Due to the longer time needed for beta diversity significance, a specific metadata column is specified to reduce computational time
 qiime diversity beta-group-significance --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_species --o-visualization core-metrics-results/unweighted-unifrac-host_species-significance.qzv --p-pairwise
 qiime diversity beta-group-significance --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-metadata-column host_subsection --o-visualization core-metrics-results/unweighted-unifrac-host_subsection-significance.qzv --p-pairwise
+
+# Alpha Diversity for ALL samples in the feature table; for when you need diversity values WITHOUT rarefaction
+qiime diversity alpha --i-table table.hostremoved.qza --p-metric shannon --o-alpha-diversity shannon_norarefaction.qza
+qiime diversity alpha-phylogenetic --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-metric faith_pd --o-alpha-diversity faithpd_norarefaction.qza
+
+# Beta Diversity for ALL samples in the feature table; for when you need diversity values WITHOUT rarefaction; distance matrix without rarefaction
+qiime diversity beta-phylogenetic --i-table table.hostremoved.qza --i-phylogeny rooted-tree.qza --p-metric unweighted_unifrac --o-distance-matrix unweighted_unifrac_distance_matrix_norarefaction.qza
+
+
 
 # Ordination plots
 qiime emperor plot --i-pcoa core-metrics-results/unweighted_unifrac_pcoa_results.qza --m-metadata-file sample-metadata.tsv --p-custom-axes host_species --o-visualization core-metrics-results/unweighted-unifrac-emperor-host_species.qzv
@@ -86,7 +93,6 @@ qiime composition ancom --i-table comp-host_species-table-l6.qza --m-metadata-fi
 
 # adonis
 qiime diversity adonis --i-distance-matrix ./core-metrics-results/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --p-formula "host_species+host_subsection" --p-permutations 10000 --p-n-jobs 4 --o-visualization ./core-metrics-results/adonis.unweighted_unifrac.qzv
-
 
 
 # Analyse how much was thrown away as host DNA using new taxonomic barplots
@@ -112,9 +118,23 @@ qiime tools export --input-path core-metrics-results/faith_pd_vector.qza --outpu
 mv export/alpha-diversity.tsv export/faith_pd_vector.tsv
 qiime tools export --input-path core-metrics-results/shannon_vector.qza --output-path export
 mv export/alpha-diversity.tsv export/shannon_vector.tsv
+
+qiime tools export --input-path shannon_norarefaction.qza --output-path export_norarefaction
+qiime tools export --input-path faithpd_norarefaction.qza --output-path export_norarefaction
+
 # Add sample column header
 sed -i 's/^\t/sample-id\t/g' export/*.tsv
 
 qiime tools export --input-path core-metrics-results/unweighted_unifrac_distance_matrix.qza --output-path export
 mv export/alpha-diversity.tsv export/unweighted_unifrac_distance_matrix.tsv
+
+qiime tools export --input-path unweighted_unifrac_distance_matrix_norarefaction.qza --output-path export_norarefaction
+
+
+
+
+
+
+
+
 
